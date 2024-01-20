@@ -5,17 +5,18 @@
         /* Custom styling for the images */
         .container {
             margin-top: 20px;
+            width: 70%;
         }
         .main_img {
             width: 100%;
             max-width: 400px;
-            height: 400px;
+            height: 300px;
 
         }
         .custom-img {
             width: 100%;
             max-width: 200px;
-            height: 200px;
+            height: 150px;
         }
 
         .margin-10 {
@@ -49,7 +50,7 @@
 
     <div>
         <div class="container">
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-md-4">
                     <img src="{{ asset('images/image1.jpg') }}" alt="Image 1" class="main_img">
                 </div>
@@ -78,7 +79,35 @@
                     </div>
 
                 </div>
-            </div>
+            </div> --}}
+
+            <table>
+                <tr>
+                    <th rowspan="2">
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 420px;">
+                    </th>
+                    <td>
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 200px;">
+                    </td>
+                    <td>
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 200px;">
+                    </td>
+                    <td>
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 200px;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 200px;">
+                    </td>
+                    <td>
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 200px;">
+                    </td>
+                    <td>
+                        <img src="{{ asset("images/image1.jpg") }}" alt="" style="width: 200px;">
+                    </td>
+                </tr>
+            </table>
             <div class="row">
                 <div class="main_title">
                     <h4>Tungro virus</h4>
