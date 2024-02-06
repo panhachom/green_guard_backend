@@ -5,9 +5,17 @@
     use App\Models\ImageFile;
     $blog = Blog::where('id', $crud->entry->id)->first();
     $model = 'App\Models\Blog';
-    $image_file = ImageFile::where('parent_id', $crud->entry->id)->where('parent_type',$model)->first();
+    $image_files = ImageFile::where('parent_id', $crud->entry->id)->where('parent_type',$model)->get();
     // dd($image_file->file_path);
 @endphp
+<style>
+    img{
+        height: 10rem;
+        object-fit: cover;
+        border-radius: 1rem;
+        margin-right: 10px;
+    }
+</style>
 @section('header')
     <link rel="stylesheet" href="{!! asset("css/upload.css") !!}">
     <section class="container-fluid d-flex">
@@ -49,17 +57,19 @@
                 </div>
                 <div class="col-sm-12">
                     <label class="my-1 mr-2">Body</label>
-                    <textarea class="form-control" cols="30" rows="8" disabled >{{ $blog->body }}</textarea>
+                    <textarea class="form-control" cols="30" rows="8" disabled >{!! $blog->body !!}</textarea>
 
                 </div>
-                <div class="col-sm-12">
-                    <label class="my-1 mr-2">solution</label>
-                    {{-- <input type="text" class="form-control" value="{{ $blog->solution }}" disabled> --}}
-                    <textarea class="form-control" cols="30" rows="8" disabled >{{ $blog->solution }}</textarea>
-                </div>
                 <div class="col-sm-12 mt-3">
-                    <label class="my-1 mr-2">Image</label>
-                    <img src="{{ asset($image_file->file_path) }}" class="image">
+                    <label class="my-1 mr-2">Images</label><br>
+
+                    @if ($image_files)
+                        @foreach ($image_files as $image_file)
+                            <div style="display: inline-block; margin-right: 10px;" class="mt-4">
+                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
 
                 <div class="col-sm-12" style="margin-top: 30px; text-align:center">

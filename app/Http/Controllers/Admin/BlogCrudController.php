@@ -134,7 +134,6 @@ class BlogCrudController extends CrudController
     public function removeImage($id)
     {
         $image = ImageFile::find($id);
-        
         if (!$image) {
             return response()->json(['error' => 'Image not found'], 404);
         }
@@ -143,7 +142,7 @@ class BlogCrudController extends CrudController
 
         $image->delete();
 
-        return response()->json(['success' => 'Image removed successfully']);
+        return  redirect()->back()->with('success', 'created Successfully.');
     }
 
 }

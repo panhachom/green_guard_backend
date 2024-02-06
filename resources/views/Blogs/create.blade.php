@@ -107,7 +107,7 @@
                                         @foreach ($image_files as $image_file)
                                             <div style="display: inline-block; margin-right: 10px;">
                                                 <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
-                                                <button class="remove-button btn btn-sm btn-danger mt-2" data-id="{{ $image_file->id }}">Remove</button>
+                                                <a class="remove-button mt-4 text-danger" data-id="{{ $image_file->id }}">Remove</a>
                                             </div>
                                         @endforeach
                                     @endif
@@ -216,21 +216,22 @@
 
             // Remove image
             $('.remove-button').on('click', function() {
-            var imageId = $(this).data('id');
+                var imageId = $(this).data('id');
+                alert(imageId);
                 $.ajax({
-                    url: '/removeImage/' + imageId,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
+                    url: '/delete/image/' + imageId,
+                    type: 'DELETE',
                     success: function(response) {
-                        $(this).closest('div').remove();
-                    }.bind(this),
+                        // Handle success, like removing the image from the UI
+                        console.log('Image deleted successfully');
+                    },
                     error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
+                        // Handle error
+                        console.error('Error deleting image:', error);
                     }
                 });
             });
+
         });
     </script>
 
