@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\BlogCrudController;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
 // --------------------------
@@ -17,4 +19,4 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
     Route::crud('blog', 'BlogCrudController');
-}); // this should be the absolute last line of this file
+    }); // this should be the absolute last line of this file

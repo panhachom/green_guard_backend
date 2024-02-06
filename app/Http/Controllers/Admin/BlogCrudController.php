@@ -45,7 +45,6 @@ class BlogCrudController extends CrudController
     {
         CRUD::column('title');
         CRUD::column('body');
-        CRUD::column('solution');
         CRUD::column('created_at');
     }
 
@@ -63,13 +62,11 @@ class BlogCrudController extends CrudController
     {
         $params = request()->all();
         // dd($params);
-
         if($params['id']){
 
             $blog = Blog::where('id', $params['id'])->first();
             $blog->title = $params['title'];
             $blog->body = $params['body'];
-            $blog->solution = $params['solution'];
             $blog->update();
 
             if(isset($params['images'])){
@@ -92,7 +89,6 @@ class BlogCrudController extends CrudController
             $blog->user_id  = backpack_auth()->user()->id;
             $blog->title    = $params['title'];
             $blog->body     = $params['body'];
-            $blog->solution = $params['solution'];
 
             $blog->save();
             $image =  $params['images'];
@@ -109,7 +105,6 @@ class BlogCrudController extends CrudController
                 'file_url' => $imageUrl,
             ]);
         }
-        // return view($this->getShowView())->with('success', 'created Successfully.');
         return  redirect()->back()->with('success', 'created Successfully.');
     }
 
@@ -127,3 +122,4 @@ class BlogCrudController extends CrudController
     }
 
 }
+

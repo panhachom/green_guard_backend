@@ -87,12 +87,12 @@
                                     <textarea class="form-control tinymce-editor" cols="30" rows="8" name="body">{!! $blog->body ?? '' !!}</textarea>
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            {{-- <div class="col-sm-12">
                                 <div class="form-group row mt-2">
                                     <label for="solution" class="col-form-label">Solution</label>
                                     <textarea class="form-control tinymce-editor" cols="30" rows="8" name="solution">{!! $blog->solution ?? '' !!}</textarea>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-sm-12">
                                 <div class="form-group row mt-2">
                                     <label  class="col-form-label">upload image</label>
@@ -102,6 +102,13 @@
                                         <img @if ($id) src="{{asset($image_file->file_path)}}" @endif class="preview-image" id="preview_first_image" style="cursor: pointer;">
                                     </div>
                                 </div>
+                                {{-- <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+                                    <input type="file" id="imageInput" name="images[]" multiple>
+                                    <button type="button" id="addImageButton">Add Image</button>
+                                    <button type="submit" class="btn btn-primary" id="uploadButton">Upload</button>
+                                    <button type="button" id="saveButton" style="display:none;">Save</button>
+                                    <div id="preview"></div>
+                                </form> --}}
                             </div>
                         </div>
                     </div>
@@ -163,5 +170,46 @@
         });
 
     </script>
+
+    {{-- <script>
+        $(document).ready(function() {
+        $('#addImageButton').on('click', function() {
+            $('#imageInput').click();
+        });
+
+        $('#imageInput').on('change', function() {
+            var files = $(this)[0].files;
+            for (var i = 0; i < files.length; i++) {
+                var reader = new FileReader();
+                reader.onload = (function(file) {
+                    return function(e) {
+                        $('#preview').append('<img src="' + e.target.result + '">');
+                    };
+                })(files[i]);
+                reader.readAsDataURL(files[i]);
+            }
+        });
+
+        $('#uploadForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log(response);
+                    // Handle success response
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    // Handle error response
+                }
+            });
+        });
+    });
+    </script> --}}
 @endsection
 
