@@ -27,8 +27,8 @@
     $id = request()->id;
     $blog = Blog::where('id', $id)->first();
     $model = 'App\Models\Blog';
-    $image_file = ImageFile::where('parent_id', $id)->where('parent_type',$model)->first();
-    // dd($entry->getKey());
+    $image_files = ImageFile::where('parent_id', $id)->where('parent_type',$model)->get();
+
 @endphp
 
 <style>
@@ -42,6 +42,12 @@
         object-fit: cover;
         height: 3rem;
         cursor: pointer;
+    }
+    img{
+        height: 10rem;
+        object-fit: cover;
+        border-radius: 1rem;
+        margin-right: 10px;
     }
 </style>
 
@@ -87,34 +93,35 @@
                                     <textarea class="form-control tinymce-editor" cols="30" rows="8" name="body">{!! $blog->body ?? '' !!}</textarea>
                                 </div>
                             </div>
-                            {{-- <div class="col-sm-12">
-                                <div class="form-group row mt-2">
-                                    <label for="solution" class="col-form-label">Solution</label>
-                                    <textarea class="form-control tinymce-editor" cols="30" rows="8" name="solution">{!! $blog->solution ?? '' !!}</textarea>
-                                </div>
-                            </div> --}}
                             <div class="col-sm-12">
-                                <div class="form-group row mt-2">
+                                {{-- <div class="form-group row mt-2">
                                     <label  class="col-form-label">upload image</label>
                                     <div class="upload-image">
                                         <img src="{{ asset('images/add.png') }}" id="add_first_image" class="image display-none">
                                         <input type="file" class="form-control" id="upload_first_image" name="images" hidden>
                                         <img @if ($id) src="{{asset($image_file->file_path)}}" @endif class="preview-image" id="preview_first_image" style="cursor: pointer;">
                                     </div>
-                                </div>
-                                {{-- <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-                                    <input type="file" id="imageInput" name="images[]" multiple>
-                                    <button type="button" id="addImageButton">Add Image</button>
-                                    <button type="submit" class="btn btn-primary" id="uploadButton">Upload</button>
-                                    <button type="button" id="saveButton" style="display:none;">Save</button>
+                                </div> --}}
+                                <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+                                    @if ($id)
+                                        @foreach ($image_files as $image_file)
+                                            <div style="display: inline-block; margin-right: 10px;">
+                                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
+                                                <button class="remove-button btn btn-sm btn-danger mt-2" data-id="{{ $image_file->id }}">Remove</button>
+                                            </div>
+                                        @endforeach
+                                    @endif
+
                                     <div id="preview"></div>
-                                </form> --}}
+                                    <input type="file" id="imageInput" name="images[]" multiple class="mt-5"> <br><br>
+                                    <button type="submit" class="btn btn-primary" id="uploadButton">Submit</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @include('crud::inc.form_save_buttons')
+                {{-- @include('crud::inc.form_save_buttons') --}}
             </form>
         </div>
     </div>
@@ -143,73 +150,89 @@
             content_css: '//www.tiny.cloud/css/codepen.min.css'
         });
 
-        $(document).ready(function(){
-            const uploadFrontImage = document.getElementById('upload_first_image');
-            const addFrontImage = document.getElementById('add_first_image');
-            const previewFrontImage = document.getElementById('preview_first_image');
+        // $(document).ready(function(){
+        //     const uploadFrontImage = document.getElementById('upload_first_image');
+        //     const addFrontImage = document.getElementById('add_first_image');
+        //     const previewFrontImage = document.getElementById('preview_first_image');
 
-            addFrontImage.addEventListener('click', () => {
-            uploadFrontImage.click();
-            });
+        //     addFrontImage.addEventListener('click', () => {
+        //     uploadFrontImage.click();
+        //     });
 
-            previewFrontImage.addEventListener('click', () => {
-            uploadFrontImage.click();
-            });
+        //     previewFrontImage.addEventListener('click', () => {
+        //     uploadFrontImage.click();
+        //     });
 
-            uploadFrontImage.addEventListener('change', () => {
-            const file = uploadFrontImage.files[0];
-            const reader = new FileReader();
+        //     uploadFrontImage.addEventListener('change', () => {
+        //     const file = uploadFrontImage.files[0];
+        //     const reader = new FileReader();
 
-            reader.addEventListener('load', () => {
-                addFrontImage.classList.add('display-none');
-                previewFrontImage.classList.remove('display-none');
-                previewFrontImage.src = reader.result;
-            });
-            reader.readAsDataURL(file);
-            });
-        });
+        //     reader.addEventListener('load', () => {
+        //         addFrontImage.classList.add('display-none');
+        //         previewFrontImage.classList.remove('display-none');
+        //         previewFrontImage.src = reader.result;
+        //     });
+        //     reader.readAsDataURL(file);
+        //     });
+        // });
 
     </script>
 
-    {{-- <script>
+    <script>
         $(document).ready(function() {
-        $('#addImageButton').on('click', function() {
-            $('#imageInput').click();
-        });
 
-        $('#imageInput').on('change', function() {
-            var files = $(this)[0].files;
-            for (var i = 0; i < files.length; i++) {
-                var reader = new FileReader();
-                reader.onload = (function(file) {
-                    return function(e) {
-                        $('#preview').append('<img src="' + e.target.result + '">');
-                    };
-                })(files[i]);
-                reader.readAsDataURL(files[i]);
-            }
-        });
-
-        $('#uploadForm').on('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    console.log(response);
-                    // Handle success response
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    // Handle error response
+            var formData = new FormData();
+            $('#imageInput').on('change', function() {
+                var files = $(this)[0].files;
+                for (var i = 0; i < files.length; i++) {
+                    formData.append('images[]', files[i]);
+                    var reader = new FileReader();
+                    reader.onload = (function(file) {
+                        return function(e) {
+                            $('#preview').append('<img src="' + e.target.result + '">');
+                        };
+                    })(files[i]);
+                    reader.readAsDataURL(files[i]);
                 }
             });
+
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+
+                    }
+                });
+            });
+
+            // Remove image
+            $('.remove-button').on('click', function() {
+            var imageId = $(this).data('id');
+                $.ajax({
+                    url: '/removeImage/' + imageId,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $(this).closest('div').remove();
+                    }.bind(this),
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
         });
-    });
-    </script> --}}
+    </script>
+
 @endsection
 

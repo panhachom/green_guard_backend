@@ -61,7 +61,7 @@ class BlogCrudController extends CrudController
     public function store()
     {
         $params = request()->all();
-        // dd($params);
+
         if($params['id']){
 
             $blog = Blog::where('id', $params['id'])->first();
@@ -70,18 +70,25 @@ class BlogCrudController extends CrudController
             $blog->update();
 
             if(isset($params['images'])){
-                $image =  $params['images'];
 
-                $imageName = $image->getClientOriginalName();
-                $imagePath = $image->store('images', 'public');
-                $imageUrl = Storage::disk('public')->url($imagePath);
+                $images =  $params['images'];
 
-                $image = ImageFile::where('parent_id', $params['id'])->where('parent_type',$this->blogModel)->first();
-                $image->update([
-                    'file_name' => $imageName,
-                    'file_path' => $imagePath,
-                    'file_url' => $imageUrl,
-                ]);
+                foreach ($images as $image){
+
+                    $imageName = $image->getClientOriginalName();
+                    $imagePath = $image->store('images', 'public');
+                    $imageUrl = Storage::disk('public')->url($imagePath);
+
+                    // $image = ImageFile::where('parent_id', $params['id'])->where('parent_type',$this->blogModel)->first();
+
+                    ImageFile::create([
+                        'parent_id' => $params['id'],
+                        'parent_type' => $this->blogModel,
+                        'file_name' => $imageName,
+                        'file_path' => $imagePath,
+                        'file_url' => $imageUrl,
+                    ]);
+                }
             }
 
         } else{
@@ -91,19 +98,22 @@ class BlogCrudController extends CrudController
             $blog->body     = $params['body'];
 
             $blog->save();
-            $image =  $params['images'];
 
-            $imageName = $image->getClientOriginalName();
-            $imagePath = $image->store('images', 'public');
-            $imageUrl = Storage::disk('public')->url($imagePath);
+            $images =  $params['images'];
 
-            ImageFile::create([
-                'parent_id' => $blog->id,
-                'parent_type' => $this->blogModel,
-                'file_name' => $imageName,
-                'file_path' => $imagePath,
-                'file_url' => $imageUrl,
-            ]);
+            foreach ($images as $image){
+                $imageName = $image->getClientOriginalName();
+                $imagePath = $image->store('images', 'public');
+                $imageUrl = Storage::disk('public')->url($imagePath);
+
+                ImageFile::create([
+                    'parent_id' => $blog->id,
+                    'parent_type' => $this->blogModel,
+                    'file_name' => $imageName,
+                    'file_path' => $imagePath,
+                    'file_url' => $imageUrl,
+                ]);
+            }
         }
         return  redirect()->back()->with('success', 'created Successfully.');
     }
@@ -119,6 +129,21 @@ class BlogCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->crud->setEditView('Blogs.create');
+    }
+
+    public function removeImage($id)
+    {
+        $image = ImageFile::find($id);
+        
+        if (!$image) {
+            return response()->json(['error' => 'Image not found'], 404);
+        }
+
+        Storage::delete($image->file_path);
+
+        $image->delete();
+
+        return response()->json(['success' => 'Image removed successfully']);
     }
 
 }
