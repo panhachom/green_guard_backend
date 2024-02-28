@@ -33,4 +33,10 @@ class Blog extends Model
     {
         return $this->morphMany(ImageFile::class, 'parent');
     }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
 }
