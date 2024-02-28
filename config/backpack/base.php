@@ -65,7 +65,7 @@ return [
         // Example (the fonts above, loaded from CDN instead)
         // 'https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css',
         // 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic',
-
+ 
         // Example (load font-awesome instead of line-awesome):
         // 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css',
     ],
@@ -86,7 +86,7 @@ return [
     // ------
 
     // Menu logo. You can replace this with an <img> tag if you have a logo.
-    'project_logo'   => '<b>Back</b>pack',
+    'project_logo'   => '<b>Green</b>Guard',
 
     // Show / hide breadcrumbs on admin panel pages.
     'breadcrumbs' => true,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogApiCrudController;
+use App\Http\Controllers\FavoriteApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/blogs', [BlogApiCrudController::class, 'index']);
 Route::get('/blogs/show/{id}', [BlogApiCrudController::class, 'show']);
+Route::post('/blogs/{blog}/favorite', [FavoriteApiController::class, 'favorite']);
