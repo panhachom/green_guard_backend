@@ -20,5 +20,6 @@ Route::group([
 ], function () { // custom admin routes
     Route::crud('blog', 'BlogCrudController');
 
+    Route::crud('user', 'UserCrudController');
 }); // this should be the absolute last line of this file
 Route::delete('/delete/image/{id}/',[BlogCrudController::class,'removeImage'])->name('delete.image');
