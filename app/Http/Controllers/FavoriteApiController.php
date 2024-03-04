@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 class FavoriteApiController extends Controller
+
 {
     public function favorite(Request $request, Blog $blog)
     {
@@ -28,5 +29,24 @@ class FavoriteApiController extends Controller
         $blog->favorites()->save($newFavorite);
 
         return response()->json(['favorite' => $newFavorite], 201);
+    }
+
+    public function listFavorites(Request $request)
+    {
+
+        if (!User::find($request->user_id)) {
+            return response()->json(['success' => false, 'message' => 'user_id is required'], 404);
+        }
+        $user = User::find($request->user_id);
+        
+        // Get all favorite blogs for the user
+        $favorites = $user->favorites()->with('blog')->get();
+
+        // Extract blog details from favorites
+        $blogList = $favorites->map(function ($favorite) {
+            return $favorite->blog;
+        });
+
+        return response()->json(['blogs' => $blogList]);
     }
 }

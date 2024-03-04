@@ -45,4 +45,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Define the relationship to retrieve favorites for a user
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }
