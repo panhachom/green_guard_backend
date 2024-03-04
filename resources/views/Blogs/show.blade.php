@@ -56,7 +56,7 @@
                     <input type="name" class="form-control" value="{{ $blog->title }}" disabled>
                 </div>
                 <div class="col-sm-12">
-                    <label class="my-1 mr-2">Body</label>
+                    <label class="my-1 mr-2">Description</label>
                     <textarea class="form-control" cols="30" rows="8" disabled >{!! $blog->body !!}</textarea>
 
                 </div>
