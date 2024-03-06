@@ -21,7 +21,7 @@ class Blog extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-    protected $fillable = ['title' , 'body' , 'user_id'];
+    protected $fillable = ['title' , 'body' , 'sub_title', 'status' , 'user_id'];
     // protected $hidden = [];
     // protected $dates = [];
     public function user()
