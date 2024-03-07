@@ -28,6 +28,7 @@
     $blog = Blog::where('id', $id)->first();
     $model = 'App\Models\Blog';
     $image_files = ImageFile::where('parent_id', $id)->where('parent_type',$model)->get();
+    // dd($blog);
 
 @endphp
 
@@ -120,7 +121,11 @@
 
                                     <div id="preview"></div>
                                     <input type="file" id="imageInput" name="images[]" multiple class="mt-5"> <br><br>
-                                    <button type="submit" class="btn btn-primary" id="uploadButton">Submit</button>
+                                    @if ($id && backpack_user()->hasRole('admin') && $blog->status == 0)
+                                        <button type="submit" class="btn btn-primary" id="uploadButton">Approve</button>
+                                    @else
+                                        <button type="submit" class="btn btn-primary" id="uploadButton">Submit</button>
+                                    @endif
                                 </form>
                             </div>
                         </div>
