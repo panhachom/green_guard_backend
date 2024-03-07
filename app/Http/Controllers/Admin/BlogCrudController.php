@@ -24,6 +24,8 @@ class BlogCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+
 
     protected $blogModel;
 
@@ -155,6 +157,12 @@ class BlogCrudController extends CrudController
         $image->delete();
 
         return  redirect()->back()->with('success', 'created Successfully.');
+    }
+    public function destroy($id)
+    {
+        CRUD::hasAccessOrFail('delete');
+        CRUD::delete($id);
+        return redirect()->back();
     }
 
 }

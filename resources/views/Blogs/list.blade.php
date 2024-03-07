@@ -81,7 +81,11 @@
                         <td>
                             <a href="{{ backpack_url('blog/' . $bolg->id . '/show') }}" class="btn btn-sm btn-link"><i class="la la-eye"></i>Preview</a>
                             <a href="{{ backpack_url('blog/' . $bolg->id . '/edit') }}" class="btn btn-sm btn-link"><i class="la la-edit"></i>Edit</a>
-                            <a href="{{ backpack_url('blog/destroy/' . $bolg->id) }}" class="btn btn-sm btn-link"><i class="la la-trash"></i>Delete</a>
+                            <form action="{{ route('blog.destroy', $bolg->id) }}" method="POST">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn btn-sm btn-link"><i class="la la-trash"></i> Delete</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach
