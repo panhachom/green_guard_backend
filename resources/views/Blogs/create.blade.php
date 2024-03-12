@@ -28,6 +28,7 @@
     $blog = Blog::where('id', $id)->first();
     $model = 'App\Models\Blog';
     $image_files = ImageFile::where('parent_id', $id)->where('parent_type',$model)->get();
+    // dd($blog);
 
 @endphp
 
@@ -89,6 +90,12 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group row mt-2">
+                                    <label for="title" class="col-form-label">Sub title</label>
+                                    <input type="text" name="sub_title" value="{{ $blog->sub_title ?? ''}}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group row mt-2">
                                     <label for="body" class="col-form-label">Description<br></label>
                                     <textarea class="form-control tinymce-editor" cols="30" rows="8" name="body">{!! $blog->body ?? '' !!}</textarea>
                                 </div>
@@ -114,7 +121,11 @@
 
                                     <div id="preview"></div>
                                     <input type="file" id="imageInput" name="images[]" multiple class="mt-5"> <br><br>
-                                    <button type="submit" class="btn btn-primary" id="uploadButton">Submit</button>
+                                    @if ($id && backpack_user()->hasRole('admin') && $blog->status == 0)
+                                        <button type="submit" class="btn btn-primary" id="uploadButton">Approve</button>
+                                    @else
+                                        <button type="submit" class="btn btn-primary" id="uploadButton">Submit</button>
+                                    @endif
                                 </form>
                             </div>
                         </div>
@@ -130,7 +141,7 @@
 @section('after_scripts')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script src="https://cdn.tiny.cloud/1/ui41xm5og1ddcipj3m3rprllqaik7e0g21k333juij2uw3h0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script> -->
-    <script src="https://cdn.tiny.cloud/1/1b9j6xjgi9bafv2n5983qwl9nrpr3sq14ozb75cofye6lnq3/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/ui41xm5og1ddcipj3m3rprllqaik7e0g21k333juij2uw3h0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script type="text/javascript">
 
         tinymce.init({
@@ -150,7 +161,7 @@
             content_css: '//www.tiny.cloud/css/codepen.min.css'
         });
 
-        
+
 
         // $(document).ready(function(){
         //     const uploadFrontImage = document.getElementById('upload_first_image');

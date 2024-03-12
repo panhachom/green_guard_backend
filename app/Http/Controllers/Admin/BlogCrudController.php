@@ -24,6 +24,8 @@ class BlogCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
+
 
     protected $blogModel;
 
@@ -43,9 +45,7 @@ class BlogCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('title');
-        CRUD::column('body');
-        CRUD::column('created_at');
+        $this->crud->setListView('Blogs.list');
     }
 
     /**
@@ -63,10 +63,15 @@ class BlogCrudController extends CrudController
         $params = request()->all();
 
         if($params['id']){
-
             $blog = Blog::where('id', $params['id'])->first();
-            $blog->title = $params['title'];
-            $blog->body = $params['body'];
+            $blog->title        = $params['title'];
+            $blog->sub_title    = $params['sub_title'];
+            $blog->status       = 1;
+            $blog->body         = $params['body'];
+
+            if(backpack_user()->hasRole('normal_user')){
+                $blog->status       = 0;
+            }
             $blog->update();
 
             if(isset($params['images'])){
@@ -92,27 +97,38 @@ class BlogCrudController extends CrudController
             }
 
         } else{
-            $blog           = new Blog();
-            $blog->user_id  = backpack_auth()->user()->id;
-            $blog->title    = $params['title'];
-            $blog->body     = $params['body'];
+            DB::beginTransaction();
+            try {
+                $blog               = new Blog();
+                $blog->user_id      = backpack_auth()->user()->id;
+                $blog->title        = $params['title'];
+                $blog->status       = 1;
+                $blog->sub_title    = $params['sub_title'];
+                $blog->body         = $params['body'];
 
-            $blog->save();
+                if(backpack_user()->hasRole('normal_user')){
+                    $blog->status       = 0;
+                }
+                $blog->save();
 
-            $images =  $params['images'];
+                $images =  $params['images'];
 
-            foreach ($images as $image){
-                $imageName = $image->getClientOriginalName();
-                $imagePath = $image->store('images', 'public');
-                $imageUrl = Storage::disk('public')->url($imagePath);
+                foreach ($images as $image){
+                    $imageName = $image->getClientOriginalName();
+                    $imagePath = $image->store('images', 'public');
+                    $imageUrl = Storage::disk('public')->url($imagePath);
 
-                ImageFile::create([
-                    'parent_id' => $blog->id,
-                    'parent_type' => $this->blogModel,
-                    'file_name' => $imageName,
-                    'file_path' => $imagePath,
-                    'file_url' => $imageUrl,
-                ]);
+                    ImageFile::create([
+                        'parent_id' => $blog->id,
+                        'parent_type' => $this->blogModel,
+                        'file_name' => $imageName,
+                        'file_path' => $imagePath,
+                        'file_url' => $imageUrl,
+                    ]);
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
             }
         }
         return  redirect()->back()->with('success', 'created Successfully.');
@@ -120,7 +136,6 @@ class BlogCrudController extends CrudController
 
     public function setupShowOperation(){
         $this->crud->setShowView('Blogs.show');
-
     }
 
     /**
@@ -137,12 +152,17 @@ class BlogCrudController extends CrudController
         if (!$image) {
             return response()->json(['error' => 'Image not found'], 404);
         }
-
         Storage::delete($image->file_path);
 
         $image->delete();
 
         return  redirect()->back()->with('success', 'created Successfully.');
+    }
+    public function destroy($id)
+    {
+        CRUD::hasAccessOrFail('delete');
+        CRUD::delete($id);
+        return redirect()->back();
     }
 
 }
