@@ -62,6 +62,7 @@ class BlogApiCrudController extends Controller
             }
             $blog->title        = $params['title'];
             $blog->sub_title    = $params['sub_title'];
+            $blog->category     = $params['category'];
             $blog->status       = 0;
             $blog->body         = $params['body'];
             $blog->update();
@@ -69,11 +70,12 @@ class BlogApiCrudController extends Controller
             return response()->json(['message' => 'Blog updated successfully'], Response::HTTP_OK);
         }else{
             $blog = new Blog([
-                'title' => $request->input('title'),
-                'body' => $request->input('body'),
-                'sub_title' => $request->input('sub_title'),
-                'status' => 0,
-                'user_id' => $request->input('user_id'),
+                'title'         => $request->input('title'),
+                'body'          => $request->input('body'),
+                'sub_title'     => $request->input('sub_title'),
+                'category'      => $request->input('category'),
+                'status'        => 0,
+                'user_id'       => $request->input('user_id'),
             ]);
             $blog->save();
             foreach ($params['images'] as $image){

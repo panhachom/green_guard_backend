@@ -60,6 +60,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Sub Title</th>
+                    <th>Category</th>
                     <th>Status</th>
                     <th>User</th>
                     <th>Created</th>
@@ -72,6 +73,7 @@
                         <tr>
                             <td>{{ $bolg->title }}</td>
                             <td>{{ $bolg->sub_title }}</td>
+                            <td>{{ $bolg->category ?? 'no result' }}</td>
                             <td>
                                 @if ($bolg->status == 1)
                                     <span class="badge bg-success">Published</span>

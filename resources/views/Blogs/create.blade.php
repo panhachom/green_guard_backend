@@ -28,7 +28,7 @@
     $blog = Blog::where('id', $id)->first();
     $model = 'App\Models\Blog';
     $image_files = ImageFile::where('parent_id', $id)->where('parent_type',$model)->get();
-    // dd($blog);
+    $categories = Blog::CATEGORIES;
 
 @endphp
 
@@ -96,19 +96,22 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group row mt-2">
+                                    <label for="date" class="col-form-label">Category</label>
+                                    <select class="form-control input-bg " name="category">
+                                        <option>select </option>
+                                        @foreach ($categories as $key => $value)
+                                            <option value="{{ $value }}" {{ $blog->category == $value ? 'selected' : '' }}>{{$value}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group row mt-2">
                                     <label for="body" class="col-form-label">Description<br></label>
                                     <textarea class="form-control tinymce-editor" cols="30" rows="8" name="body">{!! $blog->body ?? '' !!}</textarea>
                                 </div>
                             </div>
                             <div class="col-sm-12">
-                                {{-- <div class="form-group row mt-2">
-                                    <label  class="col-form-label">upload image</label>
-                                    <div class="upload-image">
-                                        <img src="{{ asset('images/add.png') }}" id="add_first_image" class="image display-none">
-                                        <input type="file" class="form-control" id="upload_first_image" name="images" hidden>
-                                        <img @if ($id) src="{{asset($image_file->file_path)}}" @endif class="preview-image" id="preview_first_image" style="cursor: pointer;">
-                                    </div>
-                                </div> --}}
                                 <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
                                     @if ($id)
                                         @foreach ($image_files as $image_file)
@@ -160,35 +163,6 @@
                 'removeformat | help',
             content_css: '//www.tiny.cloud/css/codepen.min.css'
         });
-
-
-
-        // $(document).ready(function(){
-        //     const uploadFrontImage = document.getElementById('upload_first_image');
-        //     const addFrontImage = document.getElementById('add_first_image');
-        //     const previewFrontImage = document.getElementById('preview_first_image');
-
-        //     addFrontImage.addEventListener('click', () => {
-        //     uploadFrontImage.click();
-        //     });
-
-        //     previewFrontImage.addEventListener('click', () => {
-        //     uploadFrontImage.click();
-        //     });
-
-        //     uploadFrontImage.addEventListener('change', () => {
-        //     const file = uploadFrontImage.files[0];
-        //     const reader = new FileReader();
-
-        //     reader.addEventListener('load', () => {
-        //         addFrontImage.classList.add('display-none');
-        //         previewFrontImage.classList.remove('display-none');
-        //         previewFrontImage.src = reader.result;
-        //     });
-        //     reader.readAsDataURL(file);
-        //     });
-        // });
-
     </script>
 
     <script>

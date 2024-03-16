@@ -61,11 +61,11 @@ class BlogCrudController extends CrudController
     public function store()
     {
         $params = request()->all();
-
         if($params['id']){
             $blog = Blog::where('id', $params['id'])->first();
             $blog->title        = $params['title'];
             $blog->sub_title    = $params['sub_title'];
+            $blog->category     = $params['category'];
             $blog->status       = 1;
             $blog->body         = $params['body'];
 
@@ -104,6 +104,7 @@ class BlogCrudController extends CrudController
                 $blog->title        = $params['title'];
                 $blog->status       = 1;
                 $blog->sub_title    = $params['sub_title'];
+                $blog->category     = $params['category'];
                 $blog->body         = $params['body'];
 
                 if(backpack_user()->hasRole('normal_user')){
