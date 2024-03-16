@@ -13,7 +13,7 @@ class Blog extends Model
 
     protected $table = 'blogs';
     protected $guarded = ['id'];
-    protected $fillable = ['title' , 'body' , 'sub_title', 'status' , 'user_id'];
+    protected $fillable = ['title' , 'body' , 'sub_title', 'status','category' , 'user_id'];
 
     public const  CATEGORIES =  [
         'rice_blast'            => 'ជំងឺខ្នាវអំបោះត្នោត',
