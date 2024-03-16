@@ -27,3 +27,4 @@ Route::post('/blogs/{blog}/favorite', [FavoriteApiController::class, 'favorite']
 Route::get('/favorites', [FavoriteApiController::class, 'listFavorites']);
 Route::post('login', [AuthApiController::class, 'login']);
 Route::post('register', [AuthApiController::class, 'register']);
+Route::post('/blogs/store/{id}', [BlogApiCrudController::class, 'store']);
