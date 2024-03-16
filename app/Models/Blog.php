@@ -11,19 +11,9 @@ class Blog extends Model
     use CrudTrait;
     use HasFactory;
 
-    /*
-    |--------------------------------------------------------------------------
-    | GLOBAL VARIABLES
-    |--------------------------------------------------------------------------
-    */
-
     protected $table = 'blogs';
-    // protected $primaryKey = 'id';
-    // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = ['title' , 'body' , 'sub_title', 'status' , 'user_id'];
-    // protected $hidden = [];
-    // protected $dates = [];
     public function user()
     {
         return $this->belongsTo(User::class,'user_id');
@@ -33,7 +23,7 @@ class Blog extends Model
     {
         return $this->morphMany(ImageFile::class, 'parent');
     }
-
+ 
     public function favorites()
     {
         return $this->hasMany(Favorite::class);

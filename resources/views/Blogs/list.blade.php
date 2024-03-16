@@ -12,9 +12,11 @@
     // if breadcrumbs aren't defined in the CrudController, use the default breadcrumbs
     $breadcrumbs = $breadcrumbs ?? $defaultBreadcrumbs;
     // $user = User::where('id',)
-    $bolgs = $crud->model->get();
     if(backpack_user()->hasRole('normal_user')){
         $bolgs = $crud->model::where('user_id',backpack_auth()->user()->id)->get();
+    }
+    if(backpack_user()->hasRole('admin')){
+        $bolgs = $crud->model->get();
     }
 @endphp
 
@@ -65,30 +67,37 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($bolgs as $bolg)
+                @if (isset($bolgs))
+                    @foreach ($bolgs as $bolg)
+                        <tr>
+                            <td>{{ $bolg->title }}</td>
+                            <td>{{ $bolg->sub_title }}</td>
+                            <td>
+                                @if ($bolg->status == 1)
+                                    <span class="badge bg-success">Published</span>
+                                @else
+                                    <span class="badge bg-warning">Unpublished</span>
+                                @endif
+                            </td>
+                            <td>{{ $bolg->user->name }}</td>
+                            <td>{{ $bolg->created_at }}</td>
+                            <td>
+                                <a href="{{ backpack_url('blog/' . $bolg->id . '/show') }}" class="btn btn-sm btn-link"><i class="la la-eye"></i>Preview</a>
+                                <a href="{{ backpack_url('blog/' . $bolg->id . '/edit') }}" class="btn btn-sm btn-link"><i class="la la-edit"></i>Edit</a>
+                                <form action="{{ route('blog.destroy', $bolg->id) }}" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-sm btn-link"><i class="la la-trash"></i> Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
                     <tr>
-                        <td>{{ $bolg->title }}</td>
-                        <td>{{ $bolg->sub_title }}</td>
-                        <td>
-                            @if ($bolg->status == 1)
-                                <span class="badge bg-success">Published</span>
-                            @else
-                                <span class="badge bg-warning">Unpublished</span>
-                            @endif
-                        </td>
-                        <td>{{ $bolg->user->name }}</td>
-                        <td>{{ $bolg->created_at }}</td>
-                        <td>
-                            <a href="{{ backpack_url('blog/' . $bolg->id . '/show') }}" class="btn btn-sm btn-link"><i class="la la-eye"></i>Preview</a>
-                            <a href="{{ backpack_url('blog/' . $bolg->id . '/edit') }}" class="btn btn-sm btn-link"><i class="la la-edit"></i>Edit</a>
-                            <form action="{{ route('blog.destroy', $bolg->id) }}" method="POST">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-sm btn-link"><i class="la la-trash"></i> Delete</button>
-                            </form>
-                        </td>
+                        <td>No result</td>
                     </tr>
-                @endforeach
+                @endif
+
             </tbody>
         </table>
 

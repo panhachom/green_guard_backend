@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\ImageFile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 class BlogApiCrudController extends Controller
@@ -44,10 +45,9 @@ class BlogApiCrudController extends Controller
         ], 200);
     }
 
-    public function store(Request $request, $id = null)
+    public function createOrUpdate(Request $request, $id = null)
     {
         $params = request()->all();
-
         if (!$request->user_id) {
             return response()->json(['success' => false, 'message' => 'user_id is required!']);
         }
@@ -57,60 +57,53 @@ class BlogApiCrudController extends Controller
 
         if($id){
             $blog = Blog::where('id', $id)->first();
+            if($blog == null){
+                return response()->json(['message' => 'Blog not found'], Response::HTTP_NOT_FOUND);
+            }
             $blog->title        = $params['title'];
             $blog->sub_title    = $params['sub_title'];
             $blog->status       = 0;
             $blog->body         = $params['body'];
             $blog->update();
-            if(isset($params['images'])){
-                foreach ($params['images'] as $image){
-                    $imageName = $image->getClientOriginalName();
-                    $imagePath = $image->store('images', 'public');
-                    $imageUrl = Storage::disk('public')->url($imagePath);
 
-                    ImageFile::create([
-                        'parent_id' => $params['id'],
-                        'parent_type' => 'App\Models\Blog',
-                        'file_name' => $imageName,
-                        'file_path' => $imagePath,
-                        'file_url' => $imageUrl,
-                    ]);
-                }
-            }
-        }
-
-        $blog = new Blog([
-            'title' => $request->input('title'),
-            'body' => $request->input('body'),
-            'sub_title' => $request->input('sub_title'),
-            'status' => $request->input('status'),
-            'user_id' => $request->input('user_id'),
-        ]);
-
-        $blog->save();
-
-        foreach ($request->file('images') as $image) {
-
-            $imageName = $image->getClientOriginalName();
-            $imagePath = $image->store('images', 'public');
-            $imageUrl = Storage::disk('public')->url($imagePath);
-            // dd($image);
-            ImageFile::create([
-                'parent_id' => $blog->id,
-                'parent_type' => 'App\Models\Blog',
-                'file_name' => $imageName,
-                'file_path' => $imagePath,
-                'file_url' => $imageUrl,
+            return response()->json(['message' => 'Blog updated successfully'], Response::HTTP_OK);
+        }else{
+            $blog = new Blog([
+                'title' => $request->input('title'),
+                'body' => $request->input('body'),
+                'sub_title' => $request->input('sub_title'),
+                'status' => 0,
+                'user_id' => $request->input('user_id'),
             ]);
+            $blog->save();
+            foreach ($params['images'] as $image){
+                $imageName = $image->getClientOriginalName();
+                $imagePath = $image->store('images', 'public');
+                $imageUrl = Storage::disk('public')->url($imagePath);
+                ImageFile::create([
+                    'parent_id' => $blog->id,
+                    'parent_type' => 'App\Models\Blog',
+                    'file_name' => $imageName,
+                    'file_path' => $imagePath,
+                    'file_url' => $imageUrl,
+                ]);
+            }
+            return response()->json(['message' => 'Blog created successfully'], Response::HTTP_CREATED);
         }
 
-
-        // Return success response
-        return response()->json(['message' => 'Blog created successfully'], 201);
     }
 
-    public function uploadImages(){
-
+    public function deleteImage($id){
+        $image = ImageFile::where('id', $id)->first();
+        if($image){
+            if ($image->delete()) {
+                return response()->json(['message' => 'Image deleted successfully'], 200);
+            }
+        }
+        else{
+            return response()->json(['message' => 'Image not found'], Response::HTTP_NOT_FOUND);
+        }
+        return response()->json(['message' => 'Failed to delete Image'], 500);
     }
 
 
