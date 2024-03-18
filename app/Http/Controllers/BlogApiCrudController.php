@@ -95,6 +95,19 @@ class BlogApiCrudController extends Controller
 
     }
 
+    public function delete($id){
+        $blog = Blog::where('id', $id)->first();
+        if($blog){
+            if ($blog->delete()) {
+                return response()->json(['message' => 'Blog deleted successfully'], 200);
+            }
+        }
+        else{
+            return response()->json(['message' => 'Blog not found'], Response::HTTP_NOT_FOUND);
+        }
+        return response()->json(['message' => 'Failed to delete Blog'], 500);
+    }
+
     public function deleteImage($id){
         $image = ImageFile::where('id', $id)->first();
         if($image){
@@ -107,7 +120,4 @@ class BlogApiCrudController extends Controller
         }
         return response()->json(['message' => 'Failed to delete Image'], 500);
     }
-
-
-
 }
