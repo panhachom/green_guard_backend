@@ -120,7 +120,7 @@
                                 @foreach ($image_files as $image_file)
                                     <div style="display: inline-block; margin-right: 10px;">
                                         <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;" width="150" height="60"> <br>
-                                        <a class="remove-button mt-4 text-danger" data-id="{{ $image_file->id }}">Remove</a>
+                                        {{-- <a class="remove-button mt-4 text-danger" data-id="{{ $image_file->id }}">Remove</a> --}}
                                     </div>
                                 @endforeach
                             @endif
@@ -138,6 +138,8 @@
 @section('after_scripts')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.tiny.cloud/1/ui41xm5og1ddcipj3m3rprllqaik7e0g21k333juij2uw3h0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script type="text/javascript">
 
         tinymce.init({
@@ -174,10 +176,15 @@
                     reader.readAsDataURL(files[i]);
                 }
             });
+
             // Remove image
             $('.remove-button').on('click', function() {
-                var imageId = $(this).data('id');
-                alert(imageId);
+            var imageId = $(this).data('id');
+
+            // Show confirmation message
+            var confirmed = confirm("Are you sure you want to delete this image?");
+
+            if (confirmed) {
                 $.ajax({
                     url: '/delete/image/' + imageId,
                     type: 'DELETE',
@@ -190,9 +197,11 @@
                         console.error('Error deleting image:', error);
                     }
                 });
-            });
-
+            } else {
+                // Do nothing if user cancels deletion
+            }
         });
+    });
     </script>
 
 @endsection
