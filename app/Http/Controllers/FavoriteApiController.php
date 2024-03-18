@@ -10,6 +10,19 @@ use Illuminate\Http\Request;
 class FavoriteApiController extends Controller
 
 {
+
+    public function checkFavorite(Request $request, Blog $blog)
+    {
+        if (!User::find($request->user_id)) {
+            return response()->json(['success' => false, 'message' => 'user_id is required'], 404);
+        }
+
+        // Check if the user has already favorited the blog
+        $favorite = $blog->favorites()->where('user_id', $request->user_id)->exists();
+
+        return response()->json(['is_favorite' => $favorite]);
+    }
+    
     public function favorite(Request $request, Blog $blog)
     {
         if (!User::find($request->user_id)) {
@@ -21,7 +34,7 @@ class FavoriteApiController extends Controller
         if ($favorite) {
             $blog->favorites()->where('user_id', $request->user_id)->delete();
 
-            return response()->json(['message' => 'Blog is Unliked!']);
+            return response()->json(['message' => 'Blog is Unliked!'], 200);
         }
 
         $newFavorite = new Favorite();

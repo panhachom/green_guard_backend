@@ -13,7 +13,7 @@
         {{-- @vite('resources/css/app.css') --}}
 
     </head>
-    <style>
+    <style> 
         body{
             font-family: 'Inknut Antiqua', serif;
         }

@@ -24,6 +24,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/blogs', [BlogApiCrudController::class, 'index']);
 Route::get('/blogs/show/{id}', [BlogApiCrudController::class, 'show']);
 Route::post('/blogs/{blog}/favorite', [FavoriteApiController::class, 'favorite']);
+Route::get('/blogs/{blog}/check-favorite', [FavoriteApiController::class, 'checkFavorite']);
+
 Route::get('/favorites', [FavoriteApiController::class, 'listFavorites']);
 Route::post('login', [AuthApiController::class, 'login']);
 Route::post('register', [AuthApiController::class, 'register']);
+
+
