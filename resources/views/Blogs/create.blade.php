@@ -119,7 +119,7 @@
                             @if ($id)
                                 @foreach ($image_files as $image_file)
                                     <div style="display: inline-block; margin-right: 10px;">
-                                        <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
+                                        <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;" width="150" height="60"> <br>
                                         <a class="remove-button mt-4 text-danger" data-id="{{ $image_file->id }}">Remove</a>
                                     </div>
                                 @endforeach
@@ -168,7 +168,7 @@
                     var reader = new FileReader();
                     reader.onload = (function(file) {
                         return function(e) {
-                            $('#preview').append('<img src="' + e.target.result + '">');
+                            $('#preview').append('<img class="mt-2" width="150" height="60" src="' + e.target.result + '">');
                         };
                     })(files[i]);
                     reader.readAsDataURL(files[i]);

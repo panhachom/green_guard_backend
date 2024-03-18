@@ -37,7 +37,7 @@
 
 @endsection
     <style>
-        .image {
+    .image {
         height: 10rem;
         object-fit: cover;
         border-radius: 1rem;
@@ -74,7 +74,7 @@
                     @if ($image_files)
                         @foreach ($image_files as $image_file)
                             <div style="display: inline-block; margin-right: 10px;" class="mt-4">
-                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
+                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;" width="150" height="60"> <br>
                             </div>
                         @endforeach
                     @endif
