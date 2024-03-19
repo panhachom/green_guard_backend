@@ -76,75 +76,70 @@
         <div class="{{ $crud->getCreateContentClass() }}">
 
             @include('crud::inc.grouped_errors')
-            <form action="{{ url($crud->route) }}" @if($id) action="{{url($crud->route.'/'.$entry->getKey())}}" @endif method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <input type="text" name="id" @if($id) value="{{ $blog->id }}" @endif hidden>
-                            <div class="col-sm-12">
-                                <div class="form-group row mt-2">
-                                    <label for="title" class="col-form-label">Title</label>
-                                    <input type="text" name="title" value="{{ $blog->title ?? ''}}" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group row mt-2">
-                                    <label for="title" class="col-form-label">Sub title</label>
-                                    <input type="text" name="sub_title" value="{{ $blog->sub_title ?? ''}}" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group row mt-2">
-                                    <label for="date" class="col-form-label">Category</label>
-                                    <select class="form-control input-bg " name="category">
-                                        <option>select </option>
-                                        @foreach ($categories as $key => $value)
-                                            <option value="{{ $value }}" {{ $blog->category == $value ? 'selected' : '' }}>{{$value}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="form-group row mt-2">
-                                    <label for="body" class="col-form-label">Description<br></label>
-                                    <textarea class="form-control tinymce-editor" cols="30" rows="8" name="body">{!! $blog->body ?? '' !!}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-                                    @if ($id)
-                                        @foreach ($image_files as $image_file)
-                                            <div style="display: inline-block; margin-right: 10px;">
-                                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
-                                                <a class="remove-button mt-4 text-danger" data-id="{{ $image_file->id }}">Remove</a>
-                                            </div>
-                                        @endforeach
-                                    @endif
+            <form method="post"
+		  		action="{{ url($crud->route) }}"
+				enctype="multipart/form-data"
+		  		>
+			  {!! csrf_field() !!}
 
-                                    <div id="preview"></div>
-                                    <input type="file" id="imageInput" name="images[]" multiple class="mt-5"> <br><br>
-                                    @if ($id && backpack_user()->hasRole('admin') && $blog->status == 0)
-                                        <button type="submit" class="btn btn-primary" id="uploadButton">Approve</button>
-                                    @else
-                                        <button type="submit" class="btn btn-primary" id="uploadButton">Submit</button>
-                                    @endif
-                                </form>
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <input type="text" name="id" @if($id) value="{{ $blog->id }}" @endif hidden>
+                        <div class="col-sm-12">
+                            <div class="form-group row mt-2">
+                                <label for="title" class="col-form-label">Title</label>
+                                <input type="text" name="title" value="{{ $blog->title ?? ''}}" class="form-control">
                             </div>
                         </div>
+                        <div class="col-sm-12">
+                            <div class="form-group row mt-2">
+                                <label for="title" class="col-form-label">Sub title</label>
+                                <input type="text" name="sub_title" value="{{ $blog->sub_title ?? ''}}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group row mt-2">
+                                <label for="date" class="col-form-label">Category</label>
+                                <select class="form-control input-bg " name="category">
+                                    <option>please select</option>
+                                    @foreach ($categories as $key => $value)
+                                        <option value="{{ $value }}" @if ($id){{ $blog->category == $value ? 'selected' : '' }} @endif>{{$value}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group row mt-2">
+                                <label for="body" class="col-form-label">Description<br></label>
+                                <textarea class="form-control tinymce-editor" cols="30" rows="8" name="body">{!! $blog->body ?? '' !!}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            @if ($id)
+                                @foreach ($image_files as $image_file)
+                                    <div style="display: inline-block; margin-right: 10px;">
+                                        <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;" width="150" height="60"> <br>
+                                        {{-- <a class="remove-button mt-4 text-danger" data-id="{{ $image_file->id }}">Remove</a> --}}
+                                    </div>
+                                @endforeach
+                            @endif
+                            <div id="preview"></div>
+                            <input type="file" id="imageInput" name="images[]" multiple class="mt-5"> <br><br>
+                        </div>
                     </div>
-                </div>
-
-                {{-- @include('crud::inc.form_save_buttons') --}}
-            </form>
+                @include('crud::inc.form_save_buttons')
+            </div>
+		  </form>
         </div>
     </div>
 @endsection
 
 @section('after_scripts')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- <script src="https://cdn.tiny.cloud/1/ui41xm5og1ddcipj3m3rprllqaik7e0g21k333juij2uw3h0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script> -->
     <script src="https://cdn.tiny.cloud/1/ui41xm5og1ddcipj3m3rprllqaik7e0g21k333juij2uw3h0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script type="text/javascript">
 
         tinymce.init({
@@ -167,7 +162,6 @@
 
     <script>
         $(document).ready(function() {
-
             var formData = new FormData();
             $('#imageInput').on('change', function() {
                 var files = $(this)[0].files;
@@ -176,35 +170,21 @@
                     var reader = new FileReader();
                     reader.onload = (function(file) {
                         return function(e) {
-                            $('#preview').append('<img src="' + e.target.result + '">');
+                            $('#preview').append('<img class="mt-2" width="150" height="60" src="' + e.target.result + '">');
                         };
                     })(files[i]);
                     reader.readAsDataURL(files[i]);
                 }
             });
 
-            $('#uploadForm').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-
-                    }
-                });
-            });
-
             // Remove image
             $('.remove-button').on('click', function() {
-                var imageId = $(this).data('id');
-                alert(imageId);
+            var imageId = $(this).data('id');
+
+            // Show confirmation message
+            var confirmed = confirm("Are you sure you want to delete this image?");
+
+            if (confirmed) {
                 $.ajax({
                     url: '/delete/image/' + imageId,
                     type: 'DELETE',
@@ -217,9 +197,11 @@
                         console.error('Error deleting image:', error);
                     }
                 });
-            });
-
+            } else {
+                // Do nothing if user cancels deletion
+            }
         });
+    });
     </script>
 
 @endsection
