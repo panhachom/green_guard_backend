@@ -45,7 +45,11 @@ class BlogCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        $this->crud->setListView('Blogs.list');
+        CRUD::column('title');
+        CRUD::column('sub_title');
+        CRUD::column('status')->type('status');
+        CRUD::column('category');
+        CRUD::column('created_at');
     }
 
     /**
@@ -61,11 +65,11 @@ class BlogCrudController extends CrudController
     public function store()
     {
         $params = request()->all();
-
         if($params['id']){
             $blog = Blog::where('id', $params['id'])->first();
             $blog->title        = $params['title'];
             $blog->sub_title    = $params['sub_title'];
+            $blog->category     = $params['category'];
             $blog->status       = 1;
             $blog->body         = $params['body'];
 
@@ -75,16 +79,12 @@ class BlogCrudController extends CrudController
             $blog->update();
 
             if(isset($params['images'])){
-
                 $images =  $params['images'];
-
                 foreach ($images as $image){
 
                     $imageName = $image->getClientOriginalName();
                     $imagePath = $image->store('images', 'public');
                     $imageUrl = Storage::disk('public')->url($imagePath);
-
-                    // $image = ImageFile::where('parent_id', $params['id'])->where('parent_type',$this->blogModel)->first();
 
                     ImageFile::create([
                         'parent_id' => $params['id'],
@@ -95,43 +95,41 @@ class BlogCrudController extends CrudController
                     ]);
                 }
             }
+            \Alert::success(trans('backpack::crud.update_success'))->flash();
 
         } else{
-            DB::beginTransaction();
-            try {
-                $blog               = new Blog();
-                $blog->user_id      = backpack_auth()->user()->id;
-                $blog->title        = $params['title'];
-                $blog->status       = 1;
-                $blog->sub_title    = $params['sub_title'];
-                $blog->body         = $params['body'];
+            $blog               = new Blog();
+            $blog->user_id      = backpack_auth()->user()->id;
+            $blog->title        = $params['title'];
+            $blog->status       = 1;
+            $blog->sub_title    = $params['sub_title'];
+            $blog->category     = $params['category'];
+            $blog->body         = $params['body'];
 
-                if(backpack_user()->hasRole('normal_user')){
-                    $blog->status       = 0;
-                }
-                $blog->save();
-
-                $images =  $params['images'];
-
-                foreach ($images as $image){
-                    $imageName = $image->getClientOriginalName();
-                    $imagePath = $image->store('images', 'public');
-                    $imageUrl = Storage::disk('public')->url($imagePath);
-
-                    ImageFile::create([
-                        'parent_id' => $blog->id,
-                        'parent_type' => $this->blogModel,
-                        'file_name' => $imageName,
-                        'file_path' => $imagePath,
-                        'file_url' => $imageUrl,
-                    ]);
-                }
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
+            if(backpack_user()->hasRole('normal_user')){
+                $blog->status       = 0;
             }
+            $blog->save();
+            $images =  $params['images'];
+            foreach ($images as $image){
+                $imageName = $image->getClientOriginalName();
+                $imagePath = $image->store('images', 'public');
+                $imageUrl = Storage::disk('public')->url($imagePath);
+
+                ImageFile::create([
+                    'parent_id' => $blog->id,
+                    'parent_type' => $this->blogModel,
+                    'file_name' => $imageName,
+                    'file_path' => $imagePath,
+                    'file_url' => $imageUrl,
+                ]);
+            }
+            \Alert::success(trans('backpack::crud.insert_success'))->flash();
         }
-        return  redirect()->back()->with('success', 'created Successfully.');
+
+        // save the redirect choice for next time
+        $this->crud->setSaveAction();
+        return $this->crud->performSaveAction($blog->getKey());
     }
 
     public function setupShowOperation(){
@@ -158,12 +156,5 @@ class BlogCrudController extends CrudController
 
         return  redirect()->back()->with('success', 'created Successfully.');
     }
-    public function destroy($id)
-    {
-        CRUD::hasAccessOrFail('delete');
-        CRUD::delete($id);
-        return redirect()->back();
-    }
 
 }
-

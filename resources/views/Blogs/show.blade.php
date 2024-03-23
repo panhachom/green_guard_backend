@@ -37,7 +37,7 @@
 
 @endsection
     <style>
-        .image {
+    .image {
         height: 10rem;
         object-fit: cover;
         border-radius: 1rem;
@@ -60,6 +60,10 @@
                     <input type="name" class="form-control" value="{{ $blog->sub_title }}" disabled>
                 </div>
                 <div class="col-sm-12">
+                    <label class="my-1 mr-2">Category</label>
+                    <input type="name" class="form-control" value="{{ $blog->category }}" disabled>
+                </div>
+                <div class="col-sm-12">
                     <label class="my-1 mr-2">Description</label>
                     <textarea class="form-control" cols="30" rows="8" disabled >{!! $blog->body !!}</textarea>
 
@@ -70,7 +74,7 @@
                     @if ($image_files)
                         @foreach ($image_files as $image_file)
                             <div style="display: inline-block; margin-right: 10px;" class="mt-4">
-                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;"> <br>
+                                <img src="{{ asset($image_file->file_path) }}" style="cursor: pointer;" width="150" height="60"> <br>
                             </div>
                         @endforeach
                     @endif
@@ -85,7 +89,3 @@
 </div>
 
 @endsection
-
-
-
-

@@ -65,10 +65,14 @@ class AuthApiController extends Controller
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        $user->createToken('token')->accessToken;
+        // $user->createToken('token')->accessToken;
+ 
+        $user->token = $user->createToken('myApp')->plainTextToken;
+
         return response()->json([
             'success' => true,
-            'message' => 'User register successfully.'
+            'message' => 'User registered successfully.',
+            'data' => $user,
         ]);
     }
 }
