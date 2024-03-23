@@ -31,3 +31,6 @@ Route::post('login', [AuthApiController::class, 'login']);
 Route::post('register', [AuthApiController::class, 'register']);
 
 
+Route::post('/blogs/create/{id?}', [BlogApiCrudController::class, 'createOrUpdate']);
+Route::delete('/blogs/delete/{id}', [BlogApiCrudController::class, 'delete']);
+Route::delete('/blogs/deleteImage/{id}', [BlogApiCrudController::class, 'deleteImage']);

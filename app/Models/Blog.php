@@ -11,19 +11,20 @@ class Blog extends Model
     use CrudTrait;
     use HasFactory;
 
-    /*
-    |--------------------------------------------------------------------------
-    | GLOBAL VARIABLES
-    |--------------------------------------------------------------------------
-    */
-
     protected $table = 'blogs';
-    // protected $primaryKey = 'id';
-    // public $timestamps = false;
     protected $guarded = ['id'];
-    protected $fillable = ['title' , 'body' , 'sub_title', 'status' , 'user_id'];
-    // protected $hidden = [];
-    // protected $dates = [];
+    protected $fillable = ['title' , 'body' , 'sub_title', 'status','category' , 'user_id'];
+
+    public const  CATEGORIES =  [
+        'rice_blast'            => 'ជំងឺខ្នាវអំបោះត្នោត',
+        'brown_spot'            => 'ជំងឺអុតត្នោត',
+        'bacterial_Leaf_blight' => 'ជំងឺបាក់តេរីស្រពោនស្លឹក',
+        'stem_rot'              => 'ជំងឺរលួយដើមស្រូវ',
+        'falsa_Smut'            => 'ជំងឺធ្យូងបៃតង',
+        'tungro_diseases'       => 'ជំងឺទង់គ្រោ ',
+        'other'                 => 'ផ្សេងទៀត',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class,'user_id');
