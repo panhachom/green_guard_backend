@@ -36,4 +36,5 @@ Route::delete('/blogs/delete/{id}', [BlogApiCrudController::class, 'delete']);
 Route::delete('/blogs/deleteImage/{id}', [BlogApiCrudController::class, 'deleteImage']);
 
 Route::get('/blogs/search', [BlogApiCrudController::class, 'search']);
-Route::get('/blogs/filterByCategory/{category}', [BlogApiCrudController::class, 'filterByCategory']);
+
+Route::get('/blogs/filter-by-category', [BlogApiCrudController::class, 'filterByCategory']);

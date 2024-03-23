@@ -51,23 +51,30 @@ class BlogApiCrudController extends Controller
             'blogs' => $blogs,
         ], 200);
     }
-    public function filterByCategory($category)
-    {
-        // Check if the provided category exists in the predefined categories
-        if (!array_key_exists($category, Blog::CATEGORIES)) {
-            return response()->json(['message' => 'Invalid category'], 400);
-        }
     
-        // Filter blogs by the specified category
+    public function filterByCategory(Request $request)
+    {
+        $category = $request->input('category');
+    
+        // if (empty($category)) {
+        //     return response()->json(['message' => 'Category is required'], Response::HTTP_BAD_REQUEST);
+        // }
+    
+        // // Check if the provided category is valid
+        // if (!in_array($category, array_keys(Blog::CATEGORIES))) {
+        //     return response()->json(['message' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
+        // }
+    
         $blogs = Blog::where('category', $category)
-                     ->where('status', 1)
-                     ->with('images')
-                     ->get();
+                    ->where('status', 1)
+                    ->with('images')
+                    ->get();
     
         return response()->json([
             'blogs' => $blogs,
         ], 200);
     }
+    
     
     
 
@@ -92,7 +99,8 @@ class BlogApiCrudController extends Controller
         // Return the blog and its images
         return response()->json([
             'blog' => $blog,
-            'images' => $images,
+            'images' => $blog->images,
+            // 'images' => $images,
             'user' => $blog->user
         ], 200);
     }

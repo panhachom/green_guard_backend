@@ -14,9 +14,14 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-Route::get('/', function () {
-    return view('main');
-});
+// Route::get('/', function () {
+//     return view('main');
+// });
 
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/show', [HomeController::class, 'show'])->name('home.show');
+// Route::get('/', [HomeController::class, 'index']);
+// Route::get('/show', [HomeController::class, 'show'])->name('home.show');
+
+
+Route::get('/', function () {
+    return redirect('admin');
+});
