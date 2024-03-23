@@ -46,20 +46,25 @@ class FavoriteApiController extends Controller
 
     public function listFavorites(Request $request)
     {
-
-        if (!User::find($request->user_id)) {
+        // Check if user_id is provided
+        if (!$request->has('user_id')) {
             return response()->json(['success' => false, 'message' => 'user_id is required'], 404);
         }
-        $user = User::find($request->user_id);
-        
-        // Get all favorite blogs for the user
-        $favorites = $user->favorites()->with('blog')->get();
-
+    
+        // Retrieve the user with the provided user_id
+        $user = User::with('favorites.blog.images', 'favorites.blog.user')->find($request->user_id);
+    
+        // If user not found, return error
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found'], 404);
+        }
+    
         // Extract blog details from favorites
-        $blogList = $favorites->map(function ($favorite) {
+        $blogs = $user->favorites->map(function ($favorite) {
             return $favorite->blog;
         });
-
-        return response()->json(['blogs' => $blogList]);
+    
+        return response()->json(['blogs' => $blogs]);
     }
+    
 }

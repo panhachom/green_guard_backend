@@ -12,13 +12,71 @@ use Illuminate\Support\Facades\Storage;
 
 class BlogApiCrudController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::with('images')->get();
+        $userId = $request->input('user_id');
+
+        if ($userId != null) {
+            $blogs = Blog::where('user_id', $userId)
+                         ->with('images')
+                         ->get();
+        } else {
+
+            $blogs = Blog::where('status', 1)
+            ->with('images')
+            ->get();
+        }
+
         return response()->json([
             'blogs' => $blogs,
         ], 200);
     }
+
+        public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        if (empty($query)) {
+            return response()->json(['message' => 'Search query is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $blogs = Blog::where('title', 'like', "%$query%")
+                    ->orWhere('sub_title', 'like', "%$query%")
+                    ->orWhere('body', 'like', "%$query%")
+                    ->where('status', 1)
+                    ->with('images')
+                    ->get();
+
+        return response()->json([
+            'blogs' => $blogs,
+        ], 200);
+    }
+
+    public function filterByCategory(Request $request)
+    {
+        $category = $request->input('category');
+
+        // if (empty($category)) {
+        //     return response()->json(['message' => 'Category is required'], Response::HTTP_BAD_REQUEST);
+        // }
+
+        // // Check if the provided category is valid
+        // if (!in_array($category, array_keys(Blog::CATEGORIES))) {
+        //     return response()->json(['message' => 'Invalid category'], Response::HTTP_BAD_REQUEST);
+        // }
+
+        $blogs = Blog::where('category', $category)
+                    ->where('status', 1)
+                    ->with('images')
+                    ->get();
+
+        return response()->json([
+            'blogs' => $blogs,
+        ], 200);
+    }
+
+
+
 
     public function show($idOrTitle) {
         // Check if the provided parameter is numeric (ID) or a string (title)
@@ -33,18 +91,21 @@ class BlogApiCrudController extends Controller
             return response()->json(['message' => 'Blog not found'], 404);
         }
 
+
         // Retrieve images related to the blog
         $images = ImageFile::where('parent_id', $blog->id)
                             ->where('parent_type', 'App\Models\Blog')
                             ->get();
 
+
         // Return the blog and its images
         return response()->json([
             'blog' => $blog,
-            'images' => $images
+            'images' => $blog->images,
+            // 'images' => $images,
+            'user' => $blog->user
         ], 200);
     }
-
     public function createOrUpdate(Request $request, $id = null)
     {
         $params = request()->all();
@@ -120,4 +181,5 @@ class BlogApiCrudController extends Controller
         }
         return response()->json(['message' => 'Failed to delete Image'], 500);
     }
+
 }

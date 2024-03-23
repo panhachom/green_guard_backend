@@ -40,4 +40,6 @@ class Blog extends Model
         return $this->hasMany(Favorite::class);
     }
 
+
+
 }

@@ -45,11 +45,15 @@ class BlogCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        $currentUserId = Auth::id();
         CRUD::column('title');
         CRUD::column('sub_title');
         CRUD::column('status')->type('status');
         CRUD::column('category');
         CRUD::column('created_at');
+        if(backpack_user()->hasRole('normal_user')){
+            $this->crud->addClause('where', 'user_id', '=', $currentUserId);
+        }
     }
 
     /**
